@@ -7,10 +7,10 @@ import (
 )
 
 type contact struct {
-	ID     string
-	Name   string
-	Number string
-	Email  string
+	ID     string `json:"id,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Number string `json:"number,omitempty"`
+	Email  string `json:"email,omitempty"`
 }
 
 var contacts = []contact{
@@ -23,10 +23,22 @@ func getContacts(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, contacts)
 }
 
+func postContacts(c *gin.Context) {
+	var newContact contact
+
+	if err := c.BindJSON(&newContact); err != nil {
+		return
+	}
+
+	contacts = append(contacts, newContact)
+	c.IndentedJSON(http.StatusCreated, newContact)
+}
+
 func main() {
 	r := gin.Default()
 
 	r.GET("/contacts", getContacts)
+	r.POST("/contacts", postContacts)
 
 	r.Run(":3000")
 }
