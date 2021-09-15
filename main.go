@@ -34,10 +34,24 @@ func postContacts(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newContact)
 }
 
+func getContact(c *gin.Context) {
+	id := c.Param("id")
+
+	for _, contact := range contacts {
+		if contact.ID == id {
+			c.IndentedJSON(http.StatusOK, contact)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "contact not found"})
+}
+
 func main() {
 	r := gin.Default()
 
 	r.GET("/contacts", getContacts)
+	r.GET("/contacts/:id", getContact)
 	r.POST("/contacts", postContacts)
 
 	r.Run(":3000")
